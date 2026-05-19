@@ -68,6 +68,27 @@
       margin-top: 14px;
       box-shadow: 0 8px 24px rgba(10, 30, 40, 0.05);
     }
+    .e2e-banner {
+      margin: 10px auto 0;
+      max-width: 700px;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #fca5a5;
+      background: #fef2f2;
+      color: #991b1b;
+      text-align: left;
+    }
+    .e2e-banner.pass {
+      border-color: #86efac;
+      background: #ecfdf5;
+      color: #166534;
+    }
+    .e2e-banner ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      font-weight: 600;
+      font-size: 0.86rem;
+    }
     h2 {
       margin: 0 0 8px;
       font-size: 1.18rem;
@@ -181,6 +202,14 @@
     <h1>VATool Unified Console</h1>
     <p class="sub">Single-page post-login demo for testing reports, VMs, CIS, deployment, auth workflows, and operations.</p>
     <div id="session-banner" class="session">Session: Demo login active</div>
+    <div id="e2e-banner" class="e2e-banner">
+      E2E status: pending
+      <ul>
+        <li id="e2e-login">Login role session: pending</li>
+        <li id="e2e-patch-start">Admin patch start: pending</li>
+        <li id="e2e-patch-complete">Admin patch completion: pending</li>
+      </ul>
+    </div>
     <div class="nav">
       <a href="#reports">Reports</a>
       <a href="#vms">VMs</a>
@@ -323,6 +352,28 @@
       const banner = document.getElementById("session-banner");
       banner.textContent = "Session: logged in as " + role + " (demo)";
       const isAdmin = role === "admin";
+      const e2e = {
+        login: role !== "guest",
+        patchStarted: false,
+        patchCompleted: false
+      };
+
+      const e2eBanner = document.getElementById("e2e-banner");
+      const e2eLogin = document.getElementById("e2e-login");
+      const e2ePatchStart = document.getElementById("e2e-patch-start");
+      const e2ePatchComplete = document.getElementById("e2e-patch-complete");
+
+      function refreshE2EStatus() {
+        e2eLogin.textContent = "Login role session: " + (e2e.login ? "pass" : "pending");
+        e2ePatchStart.textContent = "Admin patch start: " + (e2e.patchStarted ? "pass" : "pending");
+        e2ePatchComplete.textContent = "Admin patch completion: " + (e2e.patchCompleted ? "pass" : "pending");
+
+        const allPass = e2e.login && e2e.patchStarted && e2e.patchCompleted;
+        e2eBanner.className = allPass ? "e2e-banner pass" : "e2e-banner";
+        e2eBanner.firstChild.textContent = allPass ? "E2E status: PASS" : "E2E status: pending";
+      }
+
+      refreshE2EStatus();
 
       const vmForm = document.getElementById("vm-form");
       const vmTableBody = document.querySelector("#vm-table tbody");
@@ -386,6 +437,9 @@
         if (kernelPatchTimer) {
           return;
         }
+        e2e.patchStarted = true;
+        e2e.patchCompleted = false;
+        refreshE2EStatus();
         kernelPatchStatus.textContent = "Kernel patch status: applying hot patch set";
         const steps = [
           "Patch channel verified",
@@ -402,6 +456,8 @@
             clearInterval(kernelPatchTimer);
             kernelPatchTimer = null;
             kernelPatchStatus.textContent = "Kernel patch status: complete (no reboot required)";
+            e2e.patchCompleted = true;
+            refreshE2EStatus();
             return;
           }
           appendKernelPatch(steps[index]);
@@ -416,6 +472,9 @@
           kernelPatchTimer = null;
         }
         kernelPatchStatus.textContent = "Kernel patch status: ready (simulated)";
+        e2e.patchStarted = false;
+        e2e.patchCompleted = false;
+        refreshE2EStatus();
       });
 
       const logbox = document.getElementById("logbox");
