@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VATool Login Demo</title>
+  <style>
+    :root {
+      --ink: #102231;
+      --muted: #5b6b75;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(145deg, #d7f4ea 0%, #e6f0ff 55%, #f8f9fb 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .shell {
+      width: min(900px, 100%);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid #d7e1e7;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+    }
+    p { color: var(--muted); }
+    .login-form {
+      display: grid;
+      gap: 10px;
+    }
+    label {
+      font-size: 0.9rem;
+      color: #334155;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font: inherit;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px;
+      color: white;
+      background: linear-gradient(135deg, #0f766e, #0b5f7d);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .links {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .links a {
+      text-decoration: none;
+      color: #0369a1;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .status {
+      margin-top: 10px;
+      border-radius: 10px;
+      padding: 10px;
+      display: none;
+      font-size: 0.92rem;
+    }
+    .status.ok {
+      display: block;
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      color: #166534;
+    }
+    .status.err {
+      display: block;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #9f1239;
+    }
+    .credentials {
+      background: #f3fcfb;
+      border: 1px solid #c5ece6;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.92rem;
+      color: #134e4a;
+    }
+    .credentials strong {
+      display: inline-block;
+      min-width: 92px;
+    }
+    .demo-flow {
+      margin-top: 10px;
+      display: none;
+    }
+    .demo-flow.active { display: block; }
+    .demo-card {
+      background: #f8fbfd;
+      border: 1px solid #d9e7f0;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 760px) {
+      .shell { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="panel">
+      <h1>Login Demo</h1>
+      <p>Evaluate role aware access with demo credentials before package deployment.</p>
+      <form id="demo-login-form" class="login-form">
+        <div>
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="admin@vatool.demo" required>
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="Enter demo password" required>
+        </div>
+        <div>
+          <label for="role">Role</label>
+          <select id="role" required>
+            <option value="admin">Admin</option>
+            <option value="operator">Operator</option>
+            <option value="consultant">Security Consultant</option>
+          </select>
+        </div>
+        <button type="submit">Login To Demo</button>
+      </form>
+      <div class="links">
+        <a href="index.html">Back To Platform Features</a>
+        <a href="https://github.com/devopsgeek1979/vatool-all-in-one/releases/latest">Download Packages</a>
+      </div>
+      <div id="login-status" class="status"></div>
+      <div id="demo-flow" class="demo-flow">
+        <div class="demo-card">Dashboard access enabled with role scoped navigation.</div>
+        <div class="demo-card">Reports and CIS pages visible by permitted role.</div>
+        <div class="demo-card">VM enrollment and deployment actions available per policy.</div>
+        <div class="demo-card">Live logs and certificate download available in operations panel.</div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <h2>Demo Accounts</h2>
+      <div class="credentials">
+        <p><strong>Admin</strong> admin@vatool.demo / Demo@12345</p>
+        <p><strong>Operator</strong> operator@vatool.demo / Demo@12345</p>
+        <p><strong>Consultant</strong> consultant@vatool.demo / Demo@12345</p>
+        <p>These are evaluation-only credentials for the GitHub Pages simulation.</p>
+      </div>
+      <p>This page demonstrates the login interface and role routing preview. Full backend auth is active in the installed package runtime.</p>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      const accounts = {
+        admin: { email: "admin@vatool.demo", password: "Demo@12345" },
+        operator: { email: "operator@vatool.demo", password: "Demo@12345" },
+        consultant: { email: "consultant@vatool.demo", password: "Demo@12345" }
+      };
+
+      const form = document.getElementById("demo-login-form");
+      const status = document.getElementById("login-status");
+      const flow = document.getElementById("demo-flow");
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const email = document.getElementById("email").value.trim().toLowerCase();
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+        const account = accounts[role];
+
+        if (email === account.email && password === account.password) {
+          status.className = "status ok";
+          status.textContent = "Login success for " + role + ". Demo session is active.";
+          flow.classList.add("active");
+        } else {
+          status.className = "status err";
+          status.textContent = "Invalid credentials for selected role. Use listed demo accounts.";
+          flow.classList.remove("active");
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
