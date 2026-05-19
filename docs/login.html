@@ -133,8 +133,72 @@
       font-size: 0.9rem;
       display: inline-block;
     }
+    .demo-section {
+      margin-top: 12px;
+      border-top: 1px solid #d7e1e7;
+      padding-top: 12px;
+    }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .demo-item {
+      background: #f8fbfd;
+      border: 1px solid #d9e7f0;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.88rem;
+    }
+    .demo-item strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 0.72rem;
+      border: 1px solid #fdba74;
+      background: #fff7ed;
+      color: #9a3412;
+      margin-top: 4px;
+    }
+    .actions {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .actions button {
+      font-size: 0.86rem;
+      padding: 8px 10px;
+    }
+    .patch-status {
+      margin-top: 8px;
+      border-radius: 10px;
+      padding: 8px;
+      background: #ecfeff;
+      border: 1px solid #a5f3fc;
+      color: #155e75;
+      font-size: 0.86rem;
+    }
+    .patch-log {
+      margin-top: 8px;
+      background: #06141d;
+      color: #7bf1c9;
+      border-radius: 10px;
+      padding: 8px;
+      min-height: 84px;
+      max-height: 140px;
+      overflow: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.78rem;
+      white-space: pre-wrap;
+    }
     @media (max-width: 760px) {
       .shell { grid-template-columns: 1fr; }
+      .demo-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -174,6 +238,27 @@
         <div class="demo-card">VM enrollment and deployment actions available per policy.</div>
         <div class="demo-card">Live logs and certificate download available in operations panel.</div>
       </div>
+
+      <div class="demo-section">
+        <h2>Vulnerability Demo Feed</h2>
+        <p>Safe preview for customer evaluation. Includes zero-day risk indicators, without exploit payloads or weaponized steps.</p>
+        <div class="demo-grid" id="vuln-grid"></div>
+        <div class="actions">
+          <button id="download-vuln-json" type="button">Download Vulnerabilities JSON</button>
+          <button id="download-vuln-csv" type="button">Download Vulnerabilities CSV</button>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>Live Kernel Patching Demo</h2>
+        <p>Simulated workflow showing hot patch readiness and patch application events.</p>
+        <div id="patch-status" class="patch-status">Kernel patch status: ready (simulated)</div>
+        <div class="actions">
+          <button id="start-patching" type="button">Start Live Kernel Patch Demo</button>
+          <button id="clear-patch-log" type="button">Clear Patch Log</button>
+        </div>
+        <div id="patch-log" class="patch-log"></div>
+      </div>
     </section>
 
     <aside class="panel">
@@ -185,6 +270,7 @@
         <p>These are evaluation-only credentials for the GitHub Pages simulation.</p>
       </div>
       <p>This page demonstrates the login interface and role routing preview. Full backend auth is active in the installed package runtime.</p>
+      <p>Zero-day exploit code is intentionally excluded. This page provides detection and mitigation simulation for responsible demo use.</p>
     </aside>
   </div>
 
@@ -201,6 +287,116 @@
       const flow = document.getElementById("demo-flow");
       const goConsole = document.getElementById("go-console");
       const consoleLink = document.getElementById("console-link");
+      const vulnData = [
+        {
+          id: "CVE-2026-14001",
+          title: "Container runtime namespace escape",
+          severity: "critical",
+          zeroDayRisk: true,
+          patch: "Apply hardened runtime profile and namespace policy update"
+        },
+        {
+          id: "CVE-2026-15520",
+          title: "Privilege escalation in audit path",
+          severity: "high",
+          zeroDayRisk: false,
+          patch: "Upgrade audit module and rotate privileged tokens"
+        },
+        {
+          id: "CVE-2026-16612",
+          title: "Kernel memory corruption via crafted packet",
+          severity: "critical",
+          zeroDayRisk: true,
+          patch: "Deploy live kernel patch bundle KLP-2026-05"
+        }
+      ];
+
+      const vulnGrid = document.getElementById("vuln-grid");
+      vulnData.forEach(function (v) {
+        const card = document.createElement("div");
+        card.className = "demo-item";
+        card.innerHTML = "<strong>" + v.id + "</strong>" +
+          "<div>" + v.title + "</div>" +
+          "<div>Severity: " + v.severity + "</div>" +
+          "<div>Mitigation: " + v.patch + "</div>" +
+          (v.zeroDayRisk ? "<span class='tag'>zero-day risk indicator</span>" : "");
+        vulnGrid.appendChild(card);
+      });
+
+      function downloadText(content, filename, type) {
+        const blob = new Blob([content], { type: type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      document.getElementById("download-vuln-json").addEventListener("click", function () {
+        const payload = {
+          generatedAt: new Date().toISOString(),
+          note: "Demo data only. No exploit payloads included.",
+          vulnerabilities: vulnData
+        };
+        downloadText(JSON.stringify(payload, null, 2), "vatool-vulnerabilities-demo.json", "application/json");
+      });
+
+      document.getElementById("download-vuln-csv").addEventListener("click", function () {
+        const header = "id,title,severity,zero_day_risk,mitigation\n";
+        const rows = vulnData.map(function (v) {
+          return [v.id, v.title, v.severity, v.zeroDayRisk ? "yes" : "no", v.patch]
+            .map(function (cell) { return '"' + String(cell).replace(/"/g, '""') + '"'; })
+            .join(",");
+        }).join("\n");
+        downloadText(header + rows + "\n", "vatool-vulnerabilities-demo.csv", "text/csv");
+      });
+
+      const patchStatus = document.getElementById("patch-status");
+      const patchLog = document.getElementById("patch-log");
+      let patchTimer = null;
+      function appendPatch(line) {
+        patchLog.textContent += "[" + new Date().toISOString() + "] " + line + "\n";
+        patchLog.scrollTop = patchLog.scrollHeight;
+      }
+
+      document.getElementById("start-patching").addEventListener("click", function () {
+        if (patchTimer) {
+          return;
+        }
+        patchStatus.textContent = "Kernel patch status: applying hot patch set";
+        const steps = [
+          "Patch channel verified",
+          "Live patch bundle KLP-2026-05 validated",
+          "Applying syscall hardening patch",
+          "Applying memory safety guard patch",
+          "Patch applied without reboot",
+          "Post-patch integrity checks passed"
+        ];
+        let index = 0;
+        appendPatch("Patch run started");
+        patchTimer = setInterval(function () {
+          if (index >= steps.length) {
+            clearInterval(patchTimer);
+            patchTimer = null;
+            patchStatus.textContent = "Kernel patch status: complete (no reboot required)";
+            return;
+          }
+          appendPatch(steps[index]);
+          index += 1;
+        }, 900);
+      });
+
+      document.getElementById("clear-patch-log").addEventListener("click", function () {
+        patchLog.textContent = "";
+        if (patchTimer) {
+          clearInterval(patchTimer);
+          patchTimer = null;
+        }
+        patchStatus.textContent = "Kernel patch status: ready (simulated)";
+      });
 
       form.addEventListener("submit", function (event) {
         event.preventDefault();
