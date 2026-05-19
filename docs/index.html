@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VATool All-in-One Demo</title>
+  <style>
+    :root {
+      --ink: #0c1a22;
+      --paper: #f3f6f4;
+      --teal: #0f766e;
+      --mint: #9adbcf;
+      --gold: #f59e0b;
+      --card: #ffffff;
+      --muted: #52616b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 20% 10%, #d8efe9 0%, #f3f6f4 45%, #e8eef2 100%);
+      line-height: 1.5;
+    }
+    header {
+      padding: 56px 20px 24px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      letter-spacing: 0.02em;
+    }
+    .sub {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+    .pillbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .pill {
+      background: #e5faf5;
+      border: 1px solid #bde8df;
+      color: #0b4e48;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+    }
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 18px 20px 56px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin: 18px 0 26px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid #d7e1e7;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(10, 30, 40, 0.06);
+      transform: translateY(8px);
+      opacity: 0;
+      animation: rise 500ms ease forwards;
+    }
+    .card:nth-child(2) { animation-delay: 90ms; }
+    .card:nth-child(3) { animation-delay: 180ms; }
+    .card:nth-child(4) { animation-delay: 270ms; }
+    .card h3 { margin: 0 0 8px; font-size: 1.06rem; }
+    .card p { margin: 0; color: var(--muted); font-size: 0.94rem; }
+    section {
+      background: var(--card);
+      border: 1px solid #d7e1e7;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(10, 30, 40, 0.05);
+      margin-top: 16px;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.3rem;
+      color: #0d3b49;
+    }
+    ul { margin: 8px 0 0; padding-left: 18px; }
+    li { margin: 5px 0; }
+    .downloads a {
+      display: inline-block;
+      margin: 8px 8px 0 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--teal), #0b5f7d);
+      font-weight: 600;
+    }
+    .downloads a:hover { filter: brightness(1.07); }
+    .note {
+      margin-top: 10px;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    footer {
+      text-align: center;
+      padding: 30px 20px 50px;
+      color: #60707b;
+      font-size: 0.9rem;
+    }
+    @keyframes rise {
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @media (max-width: 640px) {
+      header { padding-top: 38px; }
+      section { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>VATool All-in-One</h1>
+    <p class="sub">AegisOS security operations stack demo with full packaging and role aware workflows.</p>
+    <div class="pillbar">
+      <span class="pill">HTTPS UI</span>
+      <span class="pill">RBAC</span>
+      <span class="pill">CIS Benchmarks</span>
+      <span class="pill">Machine Enrollment</span>
+      <span class="pill">Live Logs</span>
+    </div>
+  </header>
+  <main>
+    <div class="grid">
+      <article class="card">
+        <h3>Identity and Access</h3>
+        <p>Admin, Operator, and Security Consultant roles with gated route access and secure account workflows.</p>
+      </article>
+      <article class="card">
+        <h3>Setup and Recovery</h3>
+        <p>First run account bootstrap, login, signup, password recovery, and administrator reset controls.</p>
+      </article>
+      <article class="card">
+        <h3>Compliance and Visibility</h3>
+        <p>CIS benchmark standards pages, reports dashboard, and browser visible live operational log stream.</p>
+      </article>
+      <article class="card">
+        <h3>Deployment Operations</h3>
+        <p>Enroll target machines with network details and activate deployment from centralized control pages.</p>
+      </article>
+    </div>
+
+    <section>
+      <h2>Functional Coverage</h2>
+      <ul>
+        <li>HTTPS serving with downloadable public certificate for trust setup</li>
+        <li>Reports page with modern UI, date time display, pagination, and smooth interactions</li>
+        <li>Domain aware login branding and deployment profile persistence</li>
+        <li>Machine inventory with enrollment and activation tokens</li>
+        <li>Cross platform package generation for Linux, macOS, and Windows</li>
+      </ul>
+    </section>
+
+    <section class="downloads">
+      <h2>Package Downloads</h2>
+      <p>Use release assets for installer delivery.</p>
+      <a href="https://github.com/devopsgeek1979/vatool-all-in-one/releases/latest">Open Latest Release</a>
+      <a href="https://github.com/devopsgeek1979/vatool-all-in-one/releases/download/v1.0.0/aegisos-linux-20260519-111325.tar.gz">Linux Package</a>
+      <a href="https://github.com/devopsgeek1979/vatool-all-in-one/releases/download/v1.0.0/aegisos-macos-20260519-111326.tar.gz">macOS Package</a>
+      <a href="https://github.com/devopsgeek1979/vatool-all-in-one/releases/download/v1.0.0/aegisos-windows-20260519-111327.zip">Windows Package</a>
+      <p class="note">If package names change in future builds, update these links to match release asset filenames.</p>
+    </section>
+  </main>
+  <footer>
+    VATool All-in-One demo on GitHub Pages. Runtime behavior is delivered by the packaged daemon installers.
+  </footer>
+</body>
+</html>
