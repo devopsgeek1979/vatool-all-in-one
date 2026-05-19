@@ -362,6 +362,7 @@
       const e2eLogin = document.getElementById("e2e-login");
       const e2ePatchStart = document.getElementById("e2e-patch-start");
       const e2ePatchComplete = document.getElementById("e2e-patch-complete");
+      const logoutLink = document.querySelector('a[href="login.html"]');
 
       function refreshE2EStatus() {
         e2eLogin.textContent = "Login role session: " + (e2e.login ? "pass" : "pending");
@@ -372,6 +373,9 @@
         if (allPass) {
           localStorage.setItem("vatool-e2e-status", "pass");
           localStorage.setItem("vatool-e2e-role", role);
+          if (logoutLink) {
+            logoutLink.href = "login.html?e2e=pass";
+          }
         }
         e2eBanner.className = allPass ? "e2e-banner pass" : "e2e-banner";
         e2eBanner.firstChild.textContent = allPass ? "E2E status: PASS" : "E2E status: pending";

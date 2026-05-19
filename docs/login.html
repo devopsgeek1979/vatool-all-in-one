@@ -322,6 +322,7 @@
       const patchPermission = document.getElementById("patch-permission");
       const startPatchingBtn = document.getElementById("start-patching");
       const e2eBadge = document.getElementById("e2e-badge");
+      const loginParams = new URLSearchParams(window.location.search);
       const vulnData = [
         {
           id: "CVE-2026-14001",
@@ -359,7 +360,7 @@
       });
 
       function refreshE2EBadge() {
-        const e2eStatus = localStorage.getItem("vatool-e2e-status");
+        const e2eStatus = loginParams.get("e2e") || localStorage.getItem("vatool-e2e-status");
         const e2eRole = localStorage.getItem("vatool-e2e-role");
         const passed = e2eStatus === "pass";
         e2eBadge.classList.toggle("active", passed);
