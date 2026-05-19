@@ -103,6 +103,96 @@
       font-weight: 600;
     }
     .downloads a:hover { filter: brightness(1.07); }
+    .cta a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, #0d9488, #0369a1);
+      font-weight: 700;
+    }
+    .login-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    .demo-credentials {
+      background: #f3fcfb;
+      border: 1px solid #c5ece6;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.92rem;
+      margin-top: 10px;
+      color: #134e4a;
+    }
+    .demo-credentials strong {
+      display: inline-block;
+      min-width: 90px;
+    }
+    .login-form {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .login-form label {
+      font-size: 0.9rem;
+      color: #334155;
+    }
+    .login-form input,
+    .login-form select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font: inherit;
+    }
+    .login-form button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px;
+      color: white;
+      background: linear-gradient(135deg, #0f766e, #0b5f7d);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .status {
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.92rem;
+      margin-top: 10px;
+      display: none;
+    }
+    .status.ok {
+      display: block;
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      color: #166534;
+    }
+    .status.err {
+      display: block;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #9f1239;
+    }
+    .feature-flow {
+      display: none;
+      margin-top: 12px;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 12px;
+    }
+    .feature-flow.active {
+      display: block;
+    }
+    .flow-card {
+      background: #fbfdff;
+      border: 1px solid #dbe5ef;
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 8px;
+    }
     .note {
       margin-top: 10px;
       color: #6b7280;
@@ -120,6 +210,7 @@
     @media (max-width: 640px) {
       header { padding-top: 38px; }
       section { padding: 14px; }
+      .login-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -166,6 +257,56 @@
       </ul>
     </section>
 
+    <section id="login-demo">
+      <h2>Interactive Login Demo</h2>
+      <p>This browser demo simulates the VATool login experience so customers can evaluate role aware behavior before deployment.</p>
+      <div class="login-grid">
+        <div>
+          <form id="demo-login-form" class="login-form">
+            <div>
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="admin@vatool.demo" required>
+            </div>
+            <div>
+              <label for="password">Password</label>
+              <input id="password" type="password" placeholder="Enter demo password" required>
+            </div>
+            <div>
+              <label for="role">Role</label>
+              <select id="role" required>
+                <option value="admin">Admin</option>
+                <option value="operator">Operator</option>
+                <option value="consultant">Security Consultant</option>
+              </select>
+            </div>
+            <button type="submit">Login To Demo</button>
+          </form>
+          <div id="login-status" class="status"></div>
+          <div id="feature-flow" class="feature-flow">
+            <strong>Demo session enabled.</strong>
+            <div class="flow-card">Reports: pagination, smooth scroll, and live date time widgets.</div>
+            <div class="flow-card">CIS Benchmarks: standards pages and compliance snapshots.</div>
+            <div class="flow-card">Machine Enrollment: hostname, network address, and range capture.</div>
+            <div class="flow-card">Deployment Activation: token based activation controls per machine.</div>
+            <div class="flow-card">Live Logs: browser polling feed with deployment and audit events.</div>
+            <div class="flow-card">Certificates: downloadable public certificate endpoint for browser trust onboarding.</div>
+          </div>
+        </div>
+        <div>
+          <div class="demo-credentials">
+            <p><strong>Demo Accounts</strong></p>
+            <p><strong>Admin</strong> admin@vatool.demo / Demo@12345</p>
+            <p><strong>Operator</strong> operator@vatool.demo / Demo@12345</p>
+            <p><strong>Consultant</strong> consultant@vatool.demo / Demo@12345</p>
+            <p>These credentials are for GitHub Pages preview only and do not access production services.</p>
+          </div>
+          <div class="cta">
+            <a href="https://github.com/devopsgeek1979/vatool-all-in-one/releases/latest">Download Installer Packages</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="downloads">
       <h2>Package Downloads</h2>
       <p>Use release assets for installer delivery.</p>
@@ -179,5 +320,36 @@
   <footer>
     VATool All-in-One demo on GitHub Pages. Runtime behavior is delivered by the packaged daemon installers.
   </footer>
+  <script>
+    (function () {
+      const accounts = {
+        admin: { email: "admin@vatool.demo", password: "Demo@12345" },
+        operator: { email: "operator@vatool.demo", password: "Demo@12345" },
+        consultant: { email: "consultant@vatool.demo", password: "Demo@12345" }
+      };
+
+      const form = document.getElementById("demo-login-form");
+      const status = document.getElementById("login-status");
+      const flow = document.getElementById("feature-flow");
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const email = document.getElementById("email").value.trim().toLowerCase();
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+        const account = accounts[role];
+
+        if (email === account.email && password === account.password) {
+          status.className = "status ok";
+          status.textContent = "Login successful for " + role + ". Demo feature walkthrough unlocked.";
+          flow.classList.add("active");
+        } else {
+          status.className = "status err";
+          status.textContent = "Invalid demo credentials for selected role. Use the listed demo account values.";
+          flow.classList.remove("active");
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
