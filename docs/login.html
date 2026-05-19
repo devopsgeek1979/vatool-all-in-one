@@ -119,6 +119,20 @@
       margin-top: 8px;
       font-size: 0.9rem;
     }
+    .go-console {
+      margin-top: 10px;
+      display: none;
+    }
+    .go-console a {
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, #0f766e, #0b5f7d);
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
     @media (max-width: 760px) {
       .shell { grid-template-columns: 1fr; }
     }
@@ -153,6 +167,7 @@
         <a href="https://github.com/devopsgeek1979/vatool-all-in-one/releases/latest">Download Packages</a>
       </div>
       <div id="login-status" class="status"></div>
+      <div id="go-console" class="go-console"><a id="console-link" href="index.html">Open Unified Console</a></div>
       <div id="demo-flow" class="demo-flow">
         <div class="demo-card">Dashboard access enabled with role scoped navigation.</div>
         <div class="demo-card">Reports and CIS pages visible by permitted role.</div>
@@ -184,6 +199,8 @@
       const form = document.getElementById("demo-login-form");
       const status = document.getElementById("login-status");
       const flow = document.getElementById("demo-flow");
+      const goConsole = document.getElementById("go-console");
+      const consoleLink = document.getElementById("console-link");
 
       form.addEventListener("submit", function (event) {
         event.preventDefault();
@@ -194,12 +211,18 @@
 
         if (email === account.email && password === account.password) {
           status.className = "status ok";
-          status.textContent = "Login success for " + role + ". Demo session is active.";
+          status.textContent = "Login success for " + role + ". Redirecting to unified console...";
           flow.classList.add("active");
+          goConsole.style.display = "block";
+          consoleLink.href = "index.html?role=" + encodeURIComponent(role);
+          setTimeout(function () {
+            window.location.href = consoleLink.href;
+          }, 700);
         } else {
           status.className = "status err";
           status.textContent = "Invalid credentials for selected role. Use listed demo accounts.";
           flow.classList.remove("active");
+          goConsole.style.display = "none";
         }
       });
     })();
