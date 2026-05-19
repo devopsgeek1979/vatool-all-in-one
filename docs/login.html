@@ -200,6 +200,20 @@
       font-size: 0.78rem;
       white-space: pre-wrap;
     }
+    .e2e-badge {
+      margin-top: 8px;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid #86efac;
+      background: #ecfdf5;
+      color: #166534;
+      display: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .e2e-badge.active {
+      display: block;
+    }
     .permission-note {
       margin-top: 8px;
       border-radius: 10px;
@@ -245,6 +259,7 @@
       </div>
       <div id="login-status" class="status"></div>
       <div id="go-console" class="go-console"><a id="console-link" href="index.html">Open Unified Console</a></div>
+      <div id="e2e-badge" class="e2e-badge">All checks passed: admin E2E flow completed successfully.</div>
       <div id="demo-flow" class="demo-flow">
         <div class="demo-card">Dashboard access enabled with role scoped navigation.</div>
         <div class="demo-card">Reports and CIS pages visible by permitted role.</div>
@@ -306,6 +321,7 @@
       const roleSelect = document.getElementById("role");
       const patchPermission = document.getElementById("patch-permission");
       const startPatchingBtn = document.getElementById("start-patching");
+      const e2eBadge = document.getElementById("e2e-badge");
       const vulnData = [
         {
           id: "CVE-2026-14001",
@@ -341,6 +357,18 @@
           (v.zeroDayRisk ? "<span class='tag'>zero-day risk indicator</span>" : "");
         vulnGrid.appendChild(card);
       });
+
+      function refreshE2EBadge() {
+        const e2eStatus = localStorage.getItem("vatool-e2e-status");
+        const e2eRole = localStorage.getItem("vatool-e2e-role");
+        const passed = e2eStatus === "pass";
+        e2eBadge.classList.toggle("active", passed);
+        if (passed) {
+          e2eBadge.textContent = "All checks passed: " + (e2eRole || "admin") + " E2E flow completed successfully.";
+        }
+      }
+
+      refreshE2EBadge();
 
       function updatePatchPermission() {
         const role = roleSelect.value;
@@ -473,6 +501,7 @@
         if (email === account.email && password === account.password) {
           status.className = "status ok";
           status.textContent = "Login success for " + role + ". Redirecting to unified console...";
+          localStorage.setItem("vatool-login-role", role);
           flow.classList.add("active");
           goConsole.style.display = "block";
           consoleLink.href = "index.html?role=" + encodeURIComponent(role);

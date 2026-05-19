@@ -369,6 +369,10 @@
         e2ePatchComplete.textContent = "Admin patch completion: " + (e2e.patchCompleted ? "pass" : "pending");
 
         const allPass = e2e.login && e2e.patchStarted && e2e.patchCompleted;
+        if (allPass) {
+          localStorage.setItem("vatool-e2e-status", "pass");
+          localStorage.setItem("vatool-e2e-role", role);
+        }
         e2eBanner.className = allPass ? "e2e-banner pass" : "e2e-banner";
         e2eBanner.firstChild.textContent = allPass ? "E2E status: PASS" : "E2E status: pending";
       }
